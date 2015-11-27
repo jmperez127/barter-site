@@ -18,6 +18,7 @@ before_script:
 
 install:
   - composer install
+  - composer update
 
 script:
   - bin/phpunit test
