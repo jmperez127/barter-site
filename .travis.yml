@@ -17,8 +17,8 @@ before_script:
   - chmod a+x -R vendor/
 
 install:
-  - composer install
   - composer update
+  - composer install
 
 script:
   - bin/phpunit test
