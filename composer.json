@@ -2,7 +2,8 @@
   "name": "barter-site",
   "description": "Server-Site for bartering",
   "require": {
-    "slim/slim": "2"
+    "slim/slim": "2",
+    "symfony/yaml": "2.6.12"
   },
   "require-dev": {
     "phpunit/phpunit": "^4.8",
