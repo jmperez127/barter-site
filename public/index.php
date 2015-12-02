@@ -23,7 +23,7 @@ if ($views_path != "./templates") {
 
 // Load additional environment variables
 $env_config = $yaml_parser->parse(
-    file_get_contents(SRC_PATH.'/Config/Environments/'.$app->config('mode').'.yml'));
+    file_get_contents(SRC_PATH . '/Config/Environments/' . $app->config('mode') . '.yml'));
 
 $app->config($env_config);
 
@@ -43,5 +43,19 @@ $app->get('/', function () use ($app) {
     $app->render("index.php");
 });
 
+$app->get('/items', function () {
+});
+
+$app->get('/items/:id', function ($id) {
+});
+
+$app->post('/items', function () {
+});
+
+$app->put('/items/:id', function () {
+});
+
+$app->delete('/items/:id', function () {
+});
 
 $app->run();
