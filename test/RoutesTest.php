@@ -8,16 +8,12 @@ use test\Helpers\SlimTest;
 
 class RoutesTest extends SlimTest
 {
-//    public function testIndex()
-//    {
-//        $this->get('/');
-//        $this->assertEquals('200', $this->response->status());
-//    }
 
     public function testApiItem()
     {
-        $this->get('/api/items');
+        $this->get('/test');
         $this->assertEquals('200', $this->response->status());
+
     }
 
 }

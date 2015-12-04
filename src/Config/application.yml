@@ -1,2 +1,3 @@
 templates.path: 'App/Views'
 mode: development
+app.name: BarterApp

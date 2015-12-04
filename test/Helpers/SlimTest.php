@@ -21,11 +21,10 @@ abstract class SlimTest extends PHPUnit_Framework_TestCase
             'SERVER_NAME' => 'slim-test.dev',
         ), $options));
 
-        $app = new Application(array("mode" => "testing"));
+        $app = new Application();
         $this->app = $app;
-        $this->request = $app->request($method, $path, $options);
-//        $this->response = $app->response();
-        $this->response = $this->app->invoke();
+        $this->request = $app->getSlimInstance()->request($method, $path, $options);
+        $this->response = $app->getSlimInstance()->response();
 
         // Return STDOUT
         return ob_get_clean();
@@ -34,6 +33,5 @@ abstract class SlimTest extends PHPUnit_Framework_TestCase
     public function get($path, $options = array())
     {
         $this->request('GET', $path, $options);
-//        $this->request('GET', $path, $options);
     }
 }
