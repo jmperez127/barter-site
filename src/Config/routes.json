@@ -1,0 +1,20 @@
+[
+  {
+    "method": "get",
+    "path": "/users/:id/edit",
+    "action": "users#edit"
+  },
+  {
+    "resource": "posts",
+    "nested": [
+      {
+        "resource": "comments"
+      },
+      {
+        "method": "post",
+        "path": "/posts/:id/like/",
+        "action": "posts#like"
+      }
+    ]
+  }
+]

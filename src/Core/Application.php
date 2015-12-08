@@ -2,9 +2,10 @@
 
 namespace Barter\Core;
 
-define('SRC_PATH', realpath(__DIR__ . '/../'));
-require realpath(SRC_PATH . '/Config/start.php');
+require 'start.php';
 
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 use Slim\Slim;
 use Symfony\Component\Yaml\Parser;
 
@@ -15,15 +16,15 @@ class Application {
 
     public function __construct() {
         $this->yaml_parser = new Parser();
-        $this->loadConfigFromYml();
-        $this->slim_instance = new Slim($this->config);
-        $this->setAppName();
-        $this->setViewsPath();
-        $this->loadEnvironmentsConfigFromYml();
-
+        $this->loadAppConfig();
+        $this->initSlimAppInstance();
+        $this->setViewsFolderPath();
+        $this->loadAdditionalEnvironmentsConfig();
     }
 
-    private function setAppName() {
+    private function initSlimAppInstance() {
+        $this->slim_instance = new Slim($this->config);
+
         if (isset($this->config["app.name"]))
             $this->slim_instance->setName($this->config["app.name"]);
     }
@@ -32,7 +33,7 @@ class Application {
         return $this->slim_instance;
     }
 
-    private function setViewsPath() {
+    private function setViewsFolderPath() {
         $views_path = $this->slim_instance->config('templates.path');
         if ($views_path != "./templates") {
             $this->slim_instance->config('templates.path', realpath(SRC_PATH . "/" . $views_path));
@@ -40,11 +41,11 @@ class Application {
         }
     }
 
-    private function loadConfigFromYml() {
+    private function loadAppConfig() {
         $this->config = $this->yaml_parser->parse(file_get_contents(realpath(SRC_PATH . '/Config/application.yml')));
     }
 
-    private function loadEnvironmentsConfigFromYml() {
+    private function loadAdditionalEnvironmentsConfig() {
         $env_config = $this->yaml_parser->parse(
             file_get_contents(SRC_PATH . '/Config/Environments/' . $this->slim_instance->config('mode') . '.yml'));
 
@@ -59,5 +60,31 @@ class Application {
         });
     }
 
+    public function run(){
+        $this->hookRoutesAndControllers();
+        $this->slim_instance->run();
+    }
+
+    private function hookRoutesAndControllers() {
+        $json = file_get_contents(realpath(SRC_PATH . "/Config/routes.json"));
+
+        $jsonIterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator(json_decode($json, TRUE)),
+            RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($jsonIterator as $key => $val) {
+            if(is_array($val)) {
+                echo "$key:\n";
+            } else {
+                echo "$key => $val\n";
+            }
+        }
+
+
+        $app = $this->slim_instance;
+        $app->get('/', function () use ($app) {
+            $app->render("index.php");
+        });
+    }
 
 }
