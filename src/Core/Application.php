@@ -2,7 +2,7 @@
 
 namespace Barter\Core;
 
-require 'start.php';
+require_once 'start.php';
 
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
@@ -61,30 +61,20 @@ class Application {
     }
 
     public function run(){
-        $this->hookRoutesAndControllers();
+        $this->requireAllRoutes(realpath(SRC_PATH.'/App/Routes/'), $this->slim_instance);
         $this->slim_instance->run();
     }
 
-    private function hookRoutesAndControllers() {
-        $json = file_get_contents(realpath(SRC_PATH . "/Config/routes.json"));
-
-        $jsonIterator = new RecursiveIteratorIterator(
-            new RecursiveArrayIterator(json_decode($json, TRUE)),
-            RecursiveIteratorIterator::SELF_FIRST);
-
-        foreach ($jsonIterator as $key => $val) {
-            if(is_array($val)) {
-                echo "$key:\n";
-            } else {
-                echo "$key => $val\n";
+    protected function requireAllRoutes($dir, $app) {
+        $scan = glob("$dir/*");
+        foreach ($scan as $path) {
+            if (preg_match('/\.php$/', $path)) {
+                require_once $path;
+            }
+            else if (is_dir($path)) {
+                $this->requireAllRoutes($path, $app);
             }
         }
-
-
-        $app = $this->slim_instance;
-        $app->get('/', function () use ($app) {
-            $app->render("index.php");
-        });
     }
 
 }
